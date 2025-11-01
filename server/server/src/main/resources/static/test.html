@@ -12,20 +12,29 @@
         justify-content: center;
         justify-items: center;
         align-items: center;
-        height: 90vh;
+        height: 100vh;
         color: white;
         text-align: center;
         gap: 40px;
         grid-template-columns: 1fr 1fr;
         padding: 20px;
+        box-sizing: border-box;
     }
 
     form {
         background: #1e2a3a;
-        padding: 20px;
+        padding: 25px;
         border-radius: 10px;
         box-shadow: 0 0 15px rgba(0,0,0,0.7);
-        width: 300px;
+        width: 100%;
+        max-width: 320px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h2 {
+        margin-bottom: 15px;
     }
 
     input[type="text"] {
@@ -35,6 +44,7 @@
         border-radius: 5px;
         border: none;
         font-size: 1em;
+        box-sizing: border-box;
     }
 
     button {
@@ -46,13 +56,14 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        margin-top: 10px;
     }
     button:hover {
         background-color: #2980b9;
     }
 
     #message {
-        font-size: 1.2em;
+        font-size: 1em;
         padding: 15px;
         border: 2px solid #f3f3f3;
         border-radius: 10px;
@@ -60,6 +71,61 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         margin-top: 20px;
         min-height: 50px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* --- Responsive Design --- */
+
+    /* Tablets (portrait, <1024px) */
+    @media (max-width: 1024px) {
+        body {
+            grid-template-columns: 1fr;
+            gap: 50px;
+            height: auto;
+            padding: 40px 20px;
+        }
+
+        form {
+            max-width: 400px;
+        }
+
+        button {
+            font-size: 1.1em;
+            padding: 14px 30px;
+        }
+    }
+
+    /* Mobile devices (<600px) */
+    @media (max-width: 600px) {
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: auto;
+            gap: 30px;
+            padding: 30px 10px;
+        }
+
+        form {
+            width: 90%;
+            max-width: 320px;
+            padding: 20px 15px;
+        }
+
+        input[type="text"] {
+            font-size: 0.95em;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 1em;
+        }
+
+        #message {
+            font-size: 0.95em;
+        }
     }
 </style>
 </head>
@@ -83,44 +149,32 @@
 </form>
 
 <script>
-// Register form: navigates to registration screen with query params
+// Register form
 document.getElementById("registerForm").addEventListener("submit", function(e) {
     e.preventDefault();
-
     const username = document.getElementById("registerUsername").value;
     const platformUrl = document.getElementById("registerPlatformUrl").value;
-
     const redirectUrl = `http://project-auth-api.duckdns.org:9080/registration-screen?username=${encodeURIComponent(username)}&platformUrl=${encodeURIComponent(platformUrl)}`;
     window.location.href = redirectUrl;
 });
 
-// Login form: sends data to server and shows message returned
+// Login form
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-
     const username = document.getElementById("loginUsername").value;
     const platformUrl = document.getElementById("loginPlatformUrl").value;
     const messageDiv = document.getElementById("message");
-
-    // Clear previous message
     messageDiv.textContent = "Loading...";
 
     try {
-        // Replace this URL with the actual login API endpoint you have
         const response = await fetch('http://project-auth-api.duckdns.org:9080/api/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, platformUrl })
         });
 
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const data = await response.text();
-
         messageDiv.textContent = data || "No message received from server.";
     } catch (error) {
         messageDiv.textContent = "Error: " + error.message;

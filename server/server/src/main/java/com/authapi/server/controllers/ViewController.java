@@ -28,4 +28,9 @@ public class ViewController {
         return "forward:/test.html";
     }
 
+    @GetMapping("/error")
+    public String error() {
+        return "forward:/error.html";
+    }
+
 }
