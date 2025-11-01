@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "app.securekey.registrationTimeKey",
+    "type": "java.lang.String",
+    "description": "'app.securekey.registrationTimeKey'"
+  },
+  {
+    "name": "app.securekey.loginRequestKey",
+    "type": "java.lang.String",
+    "description": "'app.securekey.loginRequestKey'"
+  },
+  {
+    "name": "app.securekey.unregistrationTimeKey",
+    "type": "java.lang.String",
+    "description": "'app.securekey.unregistrationTimeKey'"
+  },
+  {
+    "name": "app.securekey.expireAfterMin",
+    "type": "java.lang.String",
+    "description": "'app.securekey.expireAfterMin'"
+  }
+]}

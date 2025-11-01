@@ -1,0 +1,78 @@
+name: auth_api
+description: "An application for supporting the passwordless login."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # ----- Start of Added Dependencies -----
+  flutter_secure_storage: ^9.2.4
+
+  device_info_plus: ^12.1.0
+  flutter_udid: ^4.0.0
+
+  encrypt: ^5.0.3
+  crypto: ^3.0.6
+
+  google_fonts: ^6.3.2
+
+  connectivity_plus: ^7.0.0
+  get_ip_address: ^0.0.7
+
+  local_auth: ^2.3.0
+
+  mobile_scanner: ^7.1.2
+
+  http: ^1.5.0
+
+  # ----- End of Added Dependencies -----
+
+
+dev_dependencies:
+
+  # ----- Start of Added Dev Dependencies -----
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.6
+  # ----- End of Added Dev Dependencies -----
+
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+# ----- Start of icons/splach configuration -----
+flutter_launcher_icons:
+  android: true
+  ios: true
+  adaptive_icon_background: "#162232"
+  background_color_ios: "#162232"
+  image_path: "assets/images/logo.png"
+# run the cmd -> dart run flutter_launcher_icons
+
+flutter_native_splash:
+  color: "#162232"
+  color_dark: "#162232"
+  icon_background_color: "#162232"
+  icon_background_color_dark: "#162232"
+  image: assets/images/logo.png
+  image_dark: assets/images/logo.png
+  android: true
+  ios: true
+# run the cmd -> dart run flutter_native_splash:create  
+
+# ----- End of icons/splach configuration -----
+
+flutter:
+  uses-material-design: true
+
+  # ----- Start of assets adding -----
+  assets:
+    - assets/images/logo.png
+  # ----- End of assets adding -----

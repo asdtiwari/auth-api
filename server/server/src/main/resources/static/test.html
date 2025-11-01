@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Register & Login Modules</title>
+<style>
+    body {
+        background-color: #162232;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        display: grid;
+        justify-content: center;
+        justify-items: center;
+        align-items: center;
+        height: 90vh;
+        color: white;
+        text-align: center;
+        gap: 40px;
+        grid-template-columns: 1fr 1fr;
+        padding: 20px;
+    }
+
+    form {
+        background: #1e2a3a;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.7);
+        width: 300px;
+    }
+
+    input[type="text"] {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
+
+    button {
+        background-color: #3498db;
+        border: none;
+        padding: 12px 25px;
+        color: white;
+        font-size: 1em;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    #message {
+        font-size: 1.2em;
+        padding: 15px;
+        border: 2px solid #f3f3f3;
+        border-radius: 10px;
+        background-color: #1e2a3a;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        margin-top: 20px;
+        min-height: 50px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Register Module -->
+<form id="registerForm">
+    <h2>Register</h2>
+    <input type="text" name="username" id="registerUsername" placeholder="Username" required />
+    <input type="text" name="platformUrl" id="registerPlatformUrl" placeholder="Platform URL" required />
+    <button type="submit">Register</button>
+</form>
+
+<!-- Login Module -->
+<form id="loginForm">
+    <h2>Login</h2>
+    <input type="text" name="username" id="loginUsername" placeholder="Username" required />
+    <input type="text" name="platformUrl" id="loginPlatformUrl" placeholder="Platform URL" required />
+    <button type="submit">Login</button>
+    <div id="message"></div>
+</form>
+
+<script>
+// Register form: navigates to registration screen with query params
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById("registerUsername").value;
+    const platformUrl = document.getElementById("registerPlatformUrl").value;
+
+    const redirectUrl = `http://project-auth-api.duckdns.org:9080/registration-screen?username=${encodeURIComponent(username)}&platformUrl=${encodeURIComponent(platformUrl)}`;
+    window.location.href = redirectUrl;
+});
+
+// Login form: sends data to server and shows message returned
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById("loginUsername").value;
+    const platformUrl = document.getElementById("loginPlatformUrl").value;
+    const messageDiv = document.getElementById("message");
+
+    // Clear previous message
+    messageDiv.textContent = "Loading...";
+
+    try {
+        // Replace this URL with the actual login API endpoint you have
+        const response = await fetch('http://project-auth-api.duckdns.org:9080/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, platformUrl })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.text();
+
+        messageDiv.textContent = data || "No message received from server.";
+    } catch (error) {
+        messageDiv.textContent = "Error: " + error.message;
+    }
+});
+</script>
+
+</body>
+</html>

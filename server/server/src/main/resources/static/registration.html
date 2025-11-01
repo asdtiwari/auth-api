@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registration - AuthAPI</title>
+    <style>
+        body {
+            background-color: #162232;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            display: grid;
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            height: 90vh;
+            color: white;
+            text-align: center;
+        }
+
+        #loader {
+            margin: 30px auto;
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #qr-img {
+            border-radius: 20px;
+            display: none;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #message {
+            font-size: 1.5em;
+            padding: 20px;
+            border: 2px solid #f3f3f3;
+            border-radius: 10px;
+            background-color: #1e2a3a;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="qr-container" style="display: none;">
+        <h2>Scan to Login</h2>
+        <div id="loader"></div>
+        <img id="qr-img" src="" alt="QR Code" />
+    </div>
+
+    <div id="message">Checking registration status...</div>
+
+    <script>
+        let username = "";
+        let platformUrl = "";
+
+        const qrContainer = document.getElementById("qr-container");
+        const loader = document.getElementById("loader");
+        const qrImg = document.getElementById("qr-img");
+        const messageEl = document.getElementById("message");
+
+
+        async function init() {
+            const res = await fetch("/api/session-info");
+            const data = await res.json();
+
+            if (data.error) {
+                document.getElementById("message").textContent = "❌ Session expired or invalid.";
+                return;
+            }
+
+            username = data.username;
+            platformUrl = data.platformUrl;
+
+            checkRegistrationStatus(); // Now proceed with your existing logic
+        }
+
+        async function checkRegistrationStatus() {
+            try {
+                const response = await fetch(`/api/registration-status?username=${username}&platformUrl=${platformUrl}`);
+                const status = await response.text();
+
+                if (status === "registered") {
+                    messageEl.textContent = "⚠️ User is already registered.";
+                } else if (status === "ERROR") {
+                    messageEl.textContent = "❌ Error occurred while checking status.";
+                } else {
+                    // Not registered → show QR screen
+                    showQrScreen();
+                }
+            } catch (err) {
+                messageEl.textContent = "❌ Failed to connect to server.";
+                console.error(err);
+            }
+        }
+
+        async function showQrScreen() {
+            qrContainer.style.display = "block";
+            messageEl.textContent = "Waiting for scan...";
+
+            try {
+                const response = await fetch("/api/qr-code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, platformUrl })
+                });
+
+                const base64 = await response.text();
+                qrImg.src = `data:image/png;base64,${base64}`;
+                qrImg.style.display = "block";
+                loader.style.display = "none";
+
+                pollStatus(); // Start polling
+            } catch (err) {
+                messageEl.textContent = "❌ Failed to generate QR code.";
+                console.error(err);
+            }
+        }
+
+        async function pollStatus() {
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch(`/api/registration-status?username=${username}&platformUrl=${platformUrl}`);
+                    const status = await res.text();
+
+                    if (status === "registered") {
+                        qrContainer.style.display = 'none';
+                        messageEl.textContent = "✅ Login successful!";
+                        clearInterval(interval);
+                    } else if (status === "ERROR") {
+                        qrContainer.style.display = 'none';
+                        messageEl.textContent = "❌ Error occurred.";
+                        clearInterval(interval);
+                    }
+                } catch (err) {
+                    console.error("Polling error", err);
+                }
+            }, 2000);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
