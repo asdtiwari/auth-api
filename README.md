@@ -544,7 +544,7 @@ With this setup completed, AuthAPI should be fully operational, enabling seamles
 
 ---
 
-## How to Run / Usage
+## How to Run/Usage
 
 The **AuthAPI** system enables any client platform to adopt **passwordless authentication** using device-based registration and login.  
 Integration involves two core steps: **Registration** and **Login**.  
