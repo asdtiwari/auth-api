@@ -16,6 +16,7 @@ import com.authapi.server.services.ServerServices;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -56,6 +57,7 @@ public class ApiController {
     /* ----- Endpoints for Consumer Platforms ----- */
 
     @PostMapping("/login")
+    @CrossOrigin(origins = "*")
     public String login(@RequestBody Map<String, Object> body) {
         return serverServices.login(body);
     }

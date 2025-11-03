@@ -87,7 +87,7 @@ public class ServerServicesImplementation implements ServerServices {
 
             status = TempDatabase.instance().get(hash);
 
-        } while (LocalDateTime.now().isBefore(expiry) && status.equals("requested"));
+        } while (LocalDateTime.now().isBefore(expiry) && "requested".equals(status));
 
         if(!LocalDateTime.now().isBefore(expiry)) {
             return "Exception: Session Timeout.";
